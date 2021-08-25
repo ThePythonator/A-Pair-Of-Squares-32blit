@@ -32,13 +32,13 @@ Colour::Colour(const Colour& c, uint8_t a) {
 }
 
 
-void SDL_SetRenderDrawColor(SDL_Renderer* renderer, const Colour& colour) {
-	SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
-}
-
-void SDL_SetTextureColorMod(SDL_Texture* texture, const Colour& colour) {
-	SDL_SetTextureColorMod(texture, colour.r, colour.g, colour.b);
-}
+//void SDL_SetRenderDrawColor(SDL_Renderer* renderer, const Colour& colour) {
+//	SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
+//}
+//
+//void SDL_SetTextureColorMod(SDL_Texture* texture, const Colour& colour) {
+//	SDL_SetTextureColorMod(texture, colour.r, colour.g, colour.b);
+//}
 
 
 

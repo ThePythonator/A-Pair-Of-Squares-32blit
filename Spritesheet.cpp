@@ -1,20 +1,20 @@
 #include "Spritesheet.hpp"
 
 Spritesheet::Spritesheet() {
-	w = h = pitch = 0;
+	w = h = 0;
 	rows = columns = 0;
 
 	sprite_size = 8;
 	scale = 1;
 }
 
-Spritesheet::Spritesheet(SDL_Renderer* renderer, SDL_Texture* spritesheet_texture, uint8_t sprite_size, uint8_t scale) {
-	this->renderer = renderer;
-	this->spritesheet_texture = spritesheet_texture;
+Spritesheet::Spritesheet(Surface* screen, SpriteSheet* spritesheet, uint8_t sprite_size, uint8_t scale) {
+	this->screen = screen;
+	this->spritesheet = spritesheet;
 
 	// Get width and height of spritesheet
-	SDL_QueryTexture(spritesheet_texture, NULL, NULL, &w, &h);
-	pitch = 0;
+	w = spritesheet->bounds.w;
+	h = spritesheet->bounds.h;
 
 	rows = h / sprite_size;
 	columns = w / sprite_size;
@@ -25,37 +25,37 @@ Spritesheet::Spritesheet(SDL_Renderer* renderer, SDL_Texture* spritesheet_textur
 
 void Spritesheet::sprite(uint16_t index, float x, float y) {
 	// Render sprite at index from texture to screen
-	SDL_Rect src_rect{ sprite_size * (index % columns), sprite_size * (index / columns), sprite_size, sprite_size };
-	SDL_Rect dst_rect{ x, y, sprite_size, sprite_size };
+	Rect src_rect{ sprite_size * (index % columns), sprite_size * (index / columns), sprite_size, sprite_size };
+	Point dst_point{ (int)x, (int)y };
 
-	SDL_RenderCopy(renderer, spritesheet_texture, &src_rect, &dst_rect);
+	screen->blit_sprite(src_rect, dst_point)
 }
 
 void Spritesheet::sprite(uint16_t index, float x, float y, float scale) {
 	// Render sprite at index from texture to screen
 	SDL_Rect src_rect{ sprite_size * (index % columns), sprite_size * (index / columns), sprite_size, sprite_size };
-	SDL_Rect dst_rect{ x * scale, y * scale, sprite_size * scale, sprite_size * scale };
+	SDL_Rect dst_rect{ (int)(x * scale), (int)(y * scale), sprite_size * scale, sprite_size * scale };
 
-	SDL_RenderCopy(renderer, spritesheet_texture, &src_rect, &dst_rect);
+	screen->stretch_blit_sprite(src_rect, dst_rect)
 }
 
-void Spritesheet::sprite(uint16_t index, float x, float y, float angle, SDL_Point* center, SDL_RendererFlip flip) {
+void Spritesheet::sprite(uint16_t index, float x, float y, float angle, Point& center, SpriteTransform flip) {
 	// Render sprite at index from texture to screen
 	SDL_Rect src_rect{ sprite_size * (index % columns), sprite_size * (index / columns), sprite_size, sprite_size };
-	SDL_Rect dst_rect{ x, y, sprite_size, sprite_size };
+	SDL_Rect dst_rect{ (int)x, (int)y, sprite_size, sprite_size };
 
 	if (center != NULL) {
 		center->x *= scale;
 		center->y *= scale;
 	}
 
-	SDL_RenderCopyEx(renderer, spritesheet_texture, &src_rect, &dst_rect, angle, center, flip);
+	//SDL_RenderCopyEx(renderer, spritesheet_texture, &src_rect, &dst_rect, angle, center, flip);
 }
 
-void Spritesheet::sprite(uint16_t index, float x, float y, float scale, float angle, SDL_Point* center, SDL_RendererFlip flip) {
+void Spritesheet::sprite(uint16_t index, float x, float y, float scale, float angle, Point& center, SpriteTransform flip) {
 	// Render sprite at index from texture to screen
 	SDL_Rect src_rect{ sprite_size * (index % columns), sprite_size * (index / columns), sprite_size, sprite_size };
-	SDL_Rect dst_rect{ x * scale, y * scale, sprite_size * scale, sprite_size * scale };
+	SDL_Rect dst_rect{ (int)(x * scale), (int)(y * scale), sprite_size * scale, sprite_size * scale };
 
 	// Note: possible issue here, if center != NULL, the value at that address is altered, i.e. it's modified globally, not just locally
 	if (center != NULL) {
@@ -63,7 +63,7 @@ void Spritesheet::sprite(uint16_t index, float x, float y, float scale, float an
 		center->y *= scale;
 	}
 
-	SDL_RenderCopyEx(renderer, spritesheet_texture, &src_rect, &dst_rect, angle, center, flip);
+	//SDL_RenderCopyEx(renderer, spritesheet_texture, &src_rect, &dst_rect, angle, center, flip);
 }
 
 void Spritesheet::sprite_scaled(uint16_t index, float x, float y) {
@@ -71,38 +71,32 @@ void Spritesheet::sprite_scaled(uint16_t index, float x, float y) {
 	sprite(index, x, y, scale);
 }
 
-void Spritesheet::sprite_scaled(uint16_t index, float x, float y, float angle, SDL_Point* center, SDL_RendererFlip flip) {
+void Spritesheet::sprite_scaled(uint16_t index, float x, float y, float angle, Point& center, SpriteTransform flip) {
 	// Render sprite at index from texture to screen
 	sprite(index, x, y, scale, angle, center, flip);
 }
 
-void Spritesheet::rect(SDL_Rect* src_rect, float x, float y) {
-	SDL_Rect dst_rect{ x, y, src_rect->w, src_rect->h };
+void Spritesheet::rect(Rect& src_rect, float x, float y) {
+	Point dst_point{ (int)x, (int)y };
 
-	SDL_RenderCopy(renderer, spritesheet_texture, src_rect, &dst_rect);
+	screen->blit_sprite(src_rect, dst_point);
 }
 
-void Spritesheet::rect(SDL_Rect* src_rect, float x, float y, float scale) {
-	SDL_Rect dst_rect{ x * scale, y * scale, src_rect->w * scale, src_rect->h * scale };
+void Spritesheet::rect(Rect& src_rect, float x, float y, float scale) {
+	Rect dst_rect{ (int)(x * scale), (int)(y * scale), src_rect->w * scale, src_rect->h * scale };
 
-	SDL_RenderCopy(renderer, spritesheet_texture, src_rect, &dst_rect);
+	screen->blit_sprite(src_rect, dst_rect);
 }
 
-void Spritesheet::rect_scaled(SDL_Rect* src_rect, float x, float y) {
+void Spritesheet::rect_scaled(Rect& src_rect, float x, float y) {
 	rect(src_rect, x, y, scale);
 }
 
 
-void Spritesheet::set_blend_mode(SDL_BlendMode blending)
-{
-	// Set blending type
-	SDL_SetTextureBlendMode(spritesheet_texture, blending);
-}
-
 void Spritesheet::set_alpha(uint8_t alpha)
 {
 	// Set texture alpha
-	SDL_SetTextureAlphaMod(spritesheet_texture, alpha);
+	spritesheet->alpha = alpha;
 }
 
 
@@ -111,15 +105,9 @@ float Spritesheet::get_scale() {
 }
 
 uint8_t Spritesheet::get_alpha() {
-	uint8_t alpha;
-	SDL_GetTextureAlphaMod(spritesheet_texture, &alpha);
-	return alpha;
+	return spritesheet->alpha;
 }
 
-SDL_Texture* Spritesheet::get_texture() {
-	return spritesheet_texture;
+uint8_t Spritesheet::get_sprite_size() {
+	return sprite_size;
 }
-
-//SDL_Colour get_pixel(uint16_t x, uint16_t y) {
-//
-//}

@@ -1,0 +1,10 @@
+title: A Pair Of Squares
+description: A platformer with a twist (ported for 32blit)- one set of controls for two characters!
+author: ThePythonator
+splash:
+  file: assets/image.png
+icon:
+  file: assets/icon.png
+version: v0.1.0
+category: game
+url: https://github.com/ThePythonator/A-Pair-Of-Squares-32blit

@@ -1,5 +1,13 @@
 #pragma once
 
+#include "engine/api.hpp"
+//#include "engine/engine.hpp"
+//#include "engine/input.hpp"
+//#include "engine/save.hpp"
+//#include "engine/version.hpp"
+//#include "graphics/sprite.hpp"
+//#include "graphics/color.hpp"
+
 #include "Game.hpp"
 
-int main(int argc, char* argv[]);
+//#include "InputManager.hpp"

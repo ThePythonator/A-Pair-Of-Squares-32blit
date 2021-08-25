@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SDL.h"
-
 #include "Entity.hpp"
 #include "Spritesheet.hpp"
 #include "InputManager.hpp"

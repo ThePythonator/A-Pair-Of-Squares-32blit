@@ -1,11 +1,12 @@
 #pragma once
 
-#include "SDL.h"
-#include "SDL_image.h"
-
 #include <stdio.h>
 #include <string>
 #include <array>
+
+
+#include "graphics/surface.hpp"
+
 
 #include "Player.hpp"
 #include "Spritesheet.hpp"
@@ -26,19 +27,14 @@ class Game {
 public:
 	Game();
 
-	uint8_t run();
-
-private:
-	bool init();
-	void quit();
-
-	void load_data();
-	void clear_data();
-
-	std::string find_assets_path(std::string test_file, uint8_t depth = 4);
+	void init();
 
 	void update(float dt);
 	void render();
+
+private:
+
+	void load_data();
 
 	// Update and render functions for each state
 	void update_menu_intro(float dt);
@@ -88,14 +84,6 @@ private:
 
 	bool level_is_completed();
 
-	void reset_level_stats();
-
-
-	// Loading functions
-	SDL_Texture* load_texture(std::string path);
-	SDL_Surface* load_surface(std::string path);
-	//SDL_Surface* convert_surface(SDL_Surface* surface);
-
 
 	enum class GameState {
 		MENU_INTRO,
@@ -111,20 +99,6 @@ private:
 
 
 	// Variables
-
-	// Main game window
-	SDL_Window* window = NULL;
-
-	// Renderer for window
-	SDL_Renderer* renderer = NULL;
-
-	// Spritesheet
-	SDL_Texture* spritesheet_texture = NULL;
-	Spritesheet spritesheet;
-
-	// Fonts
-	SDL_Texture* font_sheet_texture = NULL;
-	FontHandler::Font /*font_black,*/ font_white, font_selected;
 
 	// Game state
 	GameState game_state = GameState::MENU_INTRO;
@@ -163,4 +137,7 @@ private:
 		bool audio_music = true;
 		bool audio_sfx = true;
 	} settings;
+
+	// Images
+	blit::Surface spritesheet;
 };
